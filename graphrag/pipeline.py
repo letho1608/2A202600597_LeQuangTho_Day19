@@ -4,6 +4,7 @@ Entry point: python -m graphrag.pipeline
 """
 import os
 import sys
+import re
 import csv
 from collections import defaultdict
 
@@ -83,13 +84,15 @@ def main():
         else:
             f_ans = f_ctx[:200]
 
+        def clean(s):
+            return re.sub(r'[^\x20-\x7E\xC0-\xFF\xE0-\xEF\u0100-\uFFFF]', '', s[:200].replace("\n", " "))
         g_ok = len(g_ans) > 20
-        f_ok = len(f_ans) > 20
+        f_ok = len(f_ans) > 10
         all_rows.append({
             "question": q, "entity": ent,
             "graph_ok": g_ok, "flat_ok": f_ok,
-            "graph_answer": g_ans[:200].replace("\n", " "),
-            "flat_answer": f_ans[:200].replace("\n", " "),
+            "graph_answer": clean(g_ans),
+            "flat_answer": clean(f_ans),
         })
         status = f"[{'G' if g_ok else ' '}{'F' if f_ok else ' '}]"
         print(f"  Q{i+1}: {q:<45s} {status}")

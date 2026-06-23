@@ -11,8 +11,9 @@ def load_docs(data_dir: str = DATA_DIR) -> List[Dict]:
     pattern = os.path.join(data_dir, "doc_*.txt")
     for fpath in sorted(glob.glob(pattern),
                         key=lambda x: int(re.search(r'doc_(\d+)', x).group(1))):
-        with open(fpath, "r", encoding="utf-8") as f:
+        with open(fpath, "r", encoding="utf-8", errors="replace") as f:
             text = f.read()
+        text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', text)
         lines = text.split("\n")
         doc = {
             "id": int(re.search(r'doc_(\d+)', os.path.basename(fpath)).group(1)),
