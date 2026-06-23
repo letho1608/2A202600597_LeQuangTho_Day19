@@ -17,13 +17,23 @@ BENCHMARK = [
     ("Tesla co lien quan den nhung cong ty nao?", "Tesla"),
     ("Cac hang xe dien ban tai My?", "United States"),
     ("McKinsey danh gia thi truong EV ra sao?", "McKinsey"),
-    ("Uu diem cua xe dien?", "Battery Electric Vehicle"),
-    ("Cox Automotive ve doanh so EV?", "Cox Automotive"),
-    ("So sanh EV vs xe xang co loi ich gi?", "ICE"),
+    ("Uu diem cua xe dien so voi xe xang?", "Battery Electric Vehicle"),
+    ("Cox Automotive ve doanh so EV quy 1 2024?", "Cox Automotive"),
+    ("So sanh EV vs ICE co loi ich gi?", "ICE"),
     ("Ha tang sac dien o My phat trien the nao?", "Charging Station"),
     ("Vai tro cua California trong nganh EV?", "California"),
     ("Chinh sach nao ho tro phat trien EV?", "EPA"),
     ("Thi truong EV toan cau nam 2024?", "BloombergNEF"),
+    ("Nhung hang xe nao ban EV tai My?", "Ford"),
+    ("Toyota co dong gop gi cho nganh EV?", "Toyota"),
+    ("Trung Quoc anh huong the nao den EV?", "China"),
+    ("NREL nghien cuu gi ve pin xe dien?", "NREL"),
+    ("Cac cong nghe pin nao dang duoc dung?", "Lithium-ion"),
+    ("Ford dang lam gi trong linh vuc EV?", "Ford"),
+    ("Hyundai co san pham EV nao?", "Hyundai"),
+    ("Duc dong vai tro gi trong cong nghiep EV?", "Germany"),
+    ("Elon Musk lien quan den nhung cong ty nao?", "Elon Musk"),
+    ("Nhung to chuc nao nghien cuu ve EV?", "ICCT"),
 ]
 
 
@@ -56,7 +66,7 @@ def main():
     flat = FlatRAG()
     flat.index(docs)
 
-    print("\n[5/5] EVALUATION (10 benchmark questions)...")
+    print("\n[5/5] EVALUATION (20 benchmark questions)...")
     all_rows = []
     for i, (q, ent) in enumerate(BENCHMARK):
         g_ctx = get_context(G, ent)
@@ -98,7 +108,7 @@ def main():
         if r["flat_ok"]: f_tot += 1
         print(f"{i+1:<3} {r['question'][:38]:<40} {g:<10} {f:<10}")
     print("-" * 60)
-    print(f"Tong:  GraphRAG {g_tot}/10 | FlatRAG {f_tot}/10")
+    print(f"Tong:  GraphRAG {g_tot}/{len(BENCHMARK)} | FlatRAG {f_tot}/{len(BENCHMARK)}")
 
     csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "comparison_results.csv")
     with open(csv_path, "w", encoding="utf-8", newline="") as f:

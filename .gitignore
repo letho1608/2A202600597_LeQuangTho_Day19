@@ -3,3 +3,8 @@ __pycache__/
 .env
 comparison_results.csv
 knowledge_graph.png
+.ai-log/
+.ai-log/session.jsonl
+.venv/
+venv/
+

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""GraphRAG entry point. Usage: python run.py"""
+"""GraphRAG entry point. Usage: python main.py or python -m graphrag"""
 import sys, os
 sys.stdout.reconfigure(encoding='utf-8')
 
