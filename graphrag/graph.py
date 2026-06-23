@@ -59,7 +59,7 @@ def print_stats(G: nx.MultiDiGraph):
         print(f"    {name:<35s} [{cat:<15s}] deg={deg}")
 
 
-def visualize(G: nx.MultiDiGraph, output: str = "knowledge_graph.png"):
+def visualize(G: nx.MultiDiGraph, output: str = "submit/knowledge_graph.png"):
     plt.figure(figsize=(18, 14))
     pos = nx.spring_layout(G, k=2, iterations=30)
     cmap = {

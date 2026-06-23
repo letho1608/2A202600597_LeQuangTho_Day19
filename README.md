@@ -42,22 +42,25 @@ Xây dựng hệ thống **GraphRAG** (Knowledge Graph + Retrieval-Augmented Gen
 ├── .env                             # Cấu hình LLM provider
 ├── .env.example                     # Template .env
 ├── .gitignore
-├── task.docx                        # Lab instructions
-├── comparison_results.csv           # Kết quả benchmark
-├── knowledge_graph.png              # Ảnh đồ thị tri thức
+├── README.md                        # Tài liệu hướng dẫn
 ├── dataset/                         # 70 documents về EV
 │   ├── doc_1.txt
 │   └── ...
-└── graphrag/                        # Module chính
-    ├── __init__.py
-    ├── __main__.py                   # python -m graphrag
-    ├── config.py                     # Đọc .env
-    ├── loader.py                     # Load documents
-    ├── entities.py                   # Định nghĩa entity + rule extraction
-    ├── llm.py                        # LLM client đa provider
-    ├── graph.py                      # Xây dựng đồ thị NetworkX
-    ├── flat_rag.py                   # TF-IDF vector search
-    └── pipeline.py                   # Pipeline chính
+├── graphrag/                        # Module chính
+│   ├── __init__.py
+│   ├── __main__.py                   # python -m graphrag
+│   ├── config.py                     # Đọc .env
+│   ├── loader.py                     # Load documents
+│   ├── entities.py                   # Định nghĩa entity + rule extraction
+│   ├── llm.py                        # LLM client đa provider
+│   ├── graph.py                      # Xây dựng đồ thị NetworkX
+│   ├── flat_rag.py                   # TF-IDF vector search
+│   └── pipeline.py                   # Pipeline chính
+└── submit/                          # Bài nộp
+    ├── knowledge_graph.png           # Ảnh đồ thị tri thức
+    ├── comparison_results.csv        # Bảng so sánh 20 câu benchmark
+    ├── BaoCaoPhanTichChiPhi.md       # Phân tích chi phí
+    └── task.docx                     # Lab instructions
 ```
 
 ## 4. Cài đặt
@@ -344,6 +347,7 @@ LLM_API_KEY=sk-xxx
 | STT | Yêu cầu | File |
 |-----|---------|------|
 | 1 | Mã nguồn Python | `main.py` + `graphrag/` |
-| 2 | Ảnh đồ thị tri thức | `knowledge_graph.png` |
-| 3 | Bảng so sánh 20 câu benchmark | `comparison_results.csv` |
-| 4 | Phân tích chi phí | README section 11 |
+| 2 | Ảnh đồ thị tri thức | `submit/knowledge_graph.png` |
+| 3 | Bảng so sánh 20 câu benchmark | `submit/comparison_results.csv` |
+| 4 | Phân tích chi phí | `submit/BaoCaoPhanTichChiPhi.md` |
+| 5 | Task gốc | `submit/task.docx` |

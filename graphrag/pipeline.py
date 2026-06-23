@@ -110,7 +110,7 @@ def main():
     print("-" * 60)
     print(f"Tong:  GraphRAG {g_tot}/{len(BENCHMARK)} | FlatRAG {f_tot}/{len(BENCHMARK)}")
 
-    csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "comparison_results.csv")
+    csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "submit", "comparison_results.csv")
     with open(csv_path, "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=all_rows[0].keys(), escapechar="\\", quoting=csv.QUOTE_ALL)
         w.writeheader()
