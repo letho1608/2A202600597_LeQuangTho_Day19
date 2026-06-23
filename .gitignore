@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.env
+comparison_results.csv
+knowledge_graph.png
