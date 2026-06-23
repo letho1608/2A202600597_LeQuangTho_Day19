@@ -6,7 +6,10 @@ import os
 import sys
 import re
 import csv
+import time
 from collections import defaultdict
+
+log = lambda *a, **kw: print(*a, **kw, flush=True)
 
 from .config import get_config
 from .loader import load_docs
@@ -39,35 +42,36 @@ BENCHMARK = [
 
 
 def main():
-    print("=" * 60)
-    print("LAB 19: GRAPHRAG - US ELECTRIC VEHICLE SECTOR")
-    print("=" * 60)
+    t0 = time.time()
+    log("=" * 60)
+    log("LAB 19: GRAPHRAG - US ELECTRIC VEHICLE SECTOR")
+    log("=" * 60)
 
-    print("\n[1/5] LOADING DOCUMENTS...")
+    log("\n[1/5] LOADING DOCUMENTS...")
     docs = load_docs()
-    print(f"  Loaded {len(docs)} docs")
+    log(f"  Loaded {len(docs)} docs")
 
-    print("\n[2/5] ENTITY & RELATION EXTRACTION...")
+    log("\n[2/5] ENTITY & RELATION EXTRACTION...")
     llm = get_llm()
     cfg = get_config()
 
     if llm:
-        print(f"  LLM: provider={cfg['provider']}, model={cfg['model']}")
+        log(f"  LLM: provider={cfg['provider']}, model={cfg['model']}")
         G = build_from_llm(docs, llm)
     else:
-        print("  Using rule-based extraction")
+        log("  Using rule-based extraction")
         G = build_rule(docs)
 
     print_stats(G)
 
-    print("\n[3/5] RENDERING GRAPH...")
+    log("\n[3/5] RENDERING GRAPH...")
     visualize(G)
 
-    print("\n[4/5] INDEXING FLAT RAG...")
+    log("\n[4/5] INDEXING FLAT RAG...")
     flat = FlatRAG()
     flat.index(docs)
 
-    print("\n[5/5] EVALUATION (20 benchmark questions)...")
+    log("\n[5/5] EVALUATION (20 benchmark questions)...")
     all_rows = []
     for i, (q, ent) in enumerate(BENCHMARK):
         g_ctx = get_context(G, ent)
@@ -95,37 +99,39 @@ def main():
             "flat_answer": clean(f_ans),
         })
         status = f"[{'G' if g_ok else ' '}{'F' if f_ok else ' '}]"
-        print(f"  Q{i+1}: {q:<45s} {status}")
+        log(f"  Q{i+1}: {q:<45s} {status}")
 
     # Summary table
-    print("\n" + "-" * 60)
-    print("COMPARISON SUMMARY")
-    print("-" * 60)
-    print(f"{'#':<3} {'Question':<40} {'GraphRAG':<10} {'FlatRAG':<10}")
-    print("-" * 60)
+    log("\n" + "-" * 60)
+    log("COMPARISON SUMMARY")
+    log("-" * 60)
+    log(f"{'#':<3} {'Question':<40} {'GraphRAG':<10} {'FlatRAG':<10}")
+    log("-" * 60)
     g_tot = f_tot = 0
     for i, r in enumerate(all_rows):
         g = "CO" if r["graph_ok"] else "THIEU"
         f = "CO" if r["flat_ok"] else "THIEU"
         if r["graph_ok"]: g_tot += 1
         if r["flat_ok"]: f_tot += 1
-        print(f"{i+1:<3} {r['question'][:38]:<40} {g:<10} {f:<10}")
-    print("-" * 60)
-    print(f"Tong:  GraphRAG {g_tot}/{len(BENCHMARK)} | FlatRAG {f_tot}/{len(BENCHMARK)}")
+        log(f"{i+1:<3} {r['question'][:38]:<40} {g:<10} {f:<10}")
+    log("-" * 60)
+    log(f"Tong:  GraphRAG {g_tot}/{len(BENCHMARK)} | FlatRAG {f_tot}/{len(BENCHMARK)}")
 
     csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "submit", "comparison_results.csv")
     with open(csv_path, "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=all_rows[0].keys(), escapechar="\\", quoting=csv.QUOTE_ALL)
         w.writeheader()
         w.writerows(all_rows)
-    print(f"Exported: {csv_path}")
+    log(f"Exported: {csv_path}")
 
     # Cost estimate
     total_tokens = sum(len(d["content"].split()) for d in docs)
-    print(f"\nToken usage: ~{total_tokens} tokens")
-    print(f"Cost estimate: ~${total_tokens * 0.002 / 1000:.4f} (GPT-4o-mini)")
-    print(f"Config: {cfg['provider']} / {cfg['model']}")
-    print("=" * 60)
+    elapsed = time.time() - t0
+    log(f"\nToken usage: ~{total_tokens} tokens")
+    log(f"Cost estimate: ~${total_tokens * 0.002 / 1000:.4f} (GPT-4o-mini)")
+    log(f"Config: {cfg['provider']} / {cfg['model']}")
+    log(f"Total time: {elapsed:.1f}s ({elapsed/60:.1f} min)")
+    log("=" * 60)
 
 
 if __name__ == "__main__":

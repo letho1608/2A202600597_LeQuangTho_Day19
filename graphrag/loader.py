@@ -9,8 +9,10 @@ DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dataset")
 def load_docs(data_dir: str = DATA_DIR) -> List[Dict]:
     docs = []
     pattern = os.path.join(data_dir, "doc_*.txt")
-    for fpath in sorted(glob.glob(pattern),
-                        key=lambda x: int(re.search(r'doc_(\d+)', x).group(1))):
+    all_files = sorted(glob.glob(pattern),
+                       key=lambda x: int(re.search(r'doc_(\d+)', x).group(1)))
+    total = len(all_files)
+    for idx, fpath in enumerate(all_files):
         with open(fpath, "r", encoding="utf-8", errors="replace") as f:
             text = f.read()
         text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', text)
@@ -36,4 +38,6 @@ def load_docs(data_dir: str = DATA_DIR) -> List[Dict]:
                 cls.append(line)
         doc["content"] = "\n".join(cls).strip()
         docs.append(doc)
+        if (idx + 1) % 10 == 0 or idx == total - 1:
+            print(f"  Loading: {idx+1}/{total} docs", flush=True)
     return docs

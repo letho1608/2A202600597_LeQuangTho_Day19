@@ -36,6 +36,7 @@ def get_llm():
         from langchain_openai import ChatOpenAI
         base = (cfg["base_url"] or "http://localhost:11434").rstrip("/") + "/v1/"
         ollama_kw = {k: v for k, v in kw.items() if k != "api_key"}
+        ollama_kw["timeout"] = 300
         return ChatOpenAI(model=cfg["model"], api_key="ollama", base_url=base, **ollama_kw)
 
     elif cfg["provider"] == "anthropic":
@@ -78,7 +79,7 @@ def extract_triples_llm(llm, docs: List[Dict], batch_size: int = 3) -> List[Dict
         batch = docs[i:i + batch_size]
         docs_text = ""
         for doc in batch:
-            docs_text += f"\n---DOC id={doc['id']}---\n{doc['content'][:2000]}\n"
+            docs_text += f"\n---DOC id={doc['id']}---\n{doc['content'][:1000]}\n"
 
         prompt = BATCH_PROMPT.format(docs_text=docs_text)
         try:

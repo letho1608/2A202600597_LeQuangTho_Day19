@@ -12,26 +12,33 @@ from .entities import ALL_ENTS, ENTITIES, extract_entities, extract_relations
 def build_rule(docs: List[Dict]) -> nx.MultiDiGraph:
     entity_doc_map = defaultdict(set)
     all_rels = []
-    for doc in docs:
+    total = len(docs)
+    for idx, doc in enumerate(docs):
         ents = extract_entities(doc["content"])
         for en, ec in ents:
             entity_doc_map[en].add(doc["id"])
-        all_rels.extend(extract_relations(doc["content"], ents))
+        rels = extract_relations(doc["content"], ents)
+        all_rels.extend(rels)
+        if (idx + 1) % 20 == 0 or idx == total - 1:
+            print(f"  Extracting: {idx+1}/{total} docs, {len(entity_doc_map)} entities, {len(all_rels)} raw rels", flush=True)
 
     G = nx.MultiDiGraph()
     for en, ec in ALL_ENTS.items():
         if en in entity_doc_map:
             G.add_node(en, category=ec, doc_ids=list(entity_doc_map[en]))
+    edge_count = 0
     for s, r, o in list(set(all_rels)):
         if G.has_node(s) and G.has_node(o):
             G.add_edge(s, o, relation=r)
+            edge_count += 1
+    print(f"  Graph built: {G.number_of_nodes()} nodes, {edge_count} edges", flush=True)
     return G
 
 
 def build_from_llm(docs: List[Dict], llm) -> nx.MultiDiGraph:
     from .llm import extract_triples_llm
     print("  Extracting triples via LLM (batch)...")
-    triples = extract_triples_llm(llm, docs, batch_size=3)
+    triples = extract_triples_llm(llm, docs, batch_size=5)
     print(f"  Extracted {len(triples)} triples")
 
     G = nx.MultiDiGraph()
